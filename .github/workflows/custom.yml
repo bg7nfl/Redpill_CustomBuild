@@ -365,9 +365,9 @@ jobs:
                   iscustom = 'false'
                   errinfo = 'sasidxmap 参数错误, 请填写数字.'
 
-              if iscustom == 'true' and ((diskidxmap != '' and sataportmap == '') or (diskidxmap == '' and sataportmap != '') or len(diskidxmap) < len(sataportmap)):
-                  iscustom = 'false'
-                  errinfo = 'diskidxmap 和 sataportmap 参数不可单独定制, 且 diskidxmap的位数应该为sataportmap位数的2倍.'
+              #if iscustom == 'true' and ((diskidxmap != '' and sataportmap == '') or (diskidxmap == '' and sataportmap != '') or len(diskidxmap) < len(sataportmap)):
+              #    iscustom = 'false'
+              #    errinfo = 'diskidxmap 和 sataportmap 参数不可单独定制, 且 diskidxmap的位数应该为sataportmap位数的2倍.'
 
               if iscustom == 'true' and dtb != '': # and dtb != 'auto':
                   url = dtb
