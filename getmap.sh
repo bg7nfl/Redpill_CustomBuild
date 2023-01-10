@@ -3,17 +3,33 @@
 SataPortMap=""
 DiskIdxMap=""
 
-let allNum=0
-controllerNum=`cat /sys/block/sd*/device/syno_disk_serial | cut -c1-1 | sort -u | wc -w`
 
-for item in `cat /sys/block/sd*/device/syno_disk_serial | cut -c1-1 | sort -u`
+let maxIdx=`cat /sys/block/sd*/device/syno_disk_serial | cut -c1 | sort -u | tail -n 1`
+for i in $(seq 0 ${maxIdx})
 do
-  let idxNum=`cat /sys/block/sd*/device/syno_disk_serial | grep "^${item}" | sort -u | wc -w`
-  [ ${idxNum} -gt 9 ] && let idxNum=9
-  DiskIdxMap=${DiskIdxMap}`printf "%02x" ${allNum}`
-  SataPortMap=${SataPortMap}${idxNum}
-  let allNum+=${idxNum}
+  let idx=-1
+  let idx=`cat /sys/block/sd*/device/syno_disk_serial | grep "^${i}" | cut -c2 | sort -u | tail -n 1`
+  [ ${idx} -gt 8 ] && let idx=8
+  SataPortMap=${SataPortMap}$((${idx}+1))
+done
+
+let num=0
+for i in $(seq 1 ${#SataPortMap})
+do
+  let n=${SataPortMap:${i}-1:1}
+  if [ ${n} -eq 0 ]; then
+    DiskIdxMap=${DiskIdxMap}`printf "%02x" 255`
+  else
+    DiskIdxMap=${DiskIdxMap}`printf "%02x" ${num}`
+  fi
+  let num+=n
 done
 
 echo DiskIdxMap: ${DiskIdxMap}
-echo SataPortMap: ${SataPortMap}
+if [ "$(echo ${SataPortMap} | grep '0')" != "" ]; then  
+  echo 'SataPortMap: null   # Do not fill in this parameter!'
+else
+  echo SataPortMap: ${SataPortMap}
+fi
+
+
